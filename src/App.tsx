@@ -1,11 +1,6 @@
 import React from "react";
 import YourEmbeddingApp from "./YourEmbeddingApp";
-import { IMutField, IChart, IVisualConfigNew, DraggableFieldState, IVisualLayout  } from "@kanaries/graphic-walker"; // ✅ 추가됨
-
-console.log("✅ App.tsx Loaded!");
-
-
-console.log("YourEmbeddingApp Loaded:", YourEmbeddingApp);
+import { IMutField, IChart, IVisualConfigNew, DraggableFieldState, IVisualLayout  } from "@kanaries/graphic-walker"; 
 
 const data = [
     { category: "A", value: 10 },
@@ -57,7 +52,6 @@ const layout: IVisualLayout = {
 };
 
 
-// ✅ fields를 IMutField[]로 변경
 const fields: IMutField[] = [
     {
         fid: "category",
@@ -73,12 +67,12 @@ const fields: IMutField[] = [
     }
 ];
 
-// ✅ encodings 타입 수정 (DraggableFieldState 적용)
+
 const encodings: DraggableFieldState = {
     dimensions: [{ fid: "category", name: "category", semanticType: "nominal", analyticType: "dimension" }],
     measures: [{ fid: "value", name: "value", semanticType: "quantitative", analyticType: "measure" }],
-    rows: [],
-    columns: [],
+    rows: [{ fid: "value", name: "value", semanticType: "quantitative", analyticType: "measure" }], // Y-Axis (value)
+    columns: [{ fid: "category", name: "category", semanticType: "nominal", analyticType: "dimension" }], // X-Axis (category
     color: [],
     size: [],
     shape: [],
@@ -93,12 +87,12 @@ const encodings: DraggableFieldState = {
 	text : []
 };
 
-// ✅ chart를 IChart[]로 변경
+
 const graphicWalkerSpec: IChart[] = [
     {
         visId: "bar_chart_1",
         name: "Custom Chart",
-        encodings: encodings, // ✅ 수정된 encodings 적용
+        encodings: encodings, 
         config: config,
         layout: layout 
     }
