@@ -2,9 +2,9 @@ import React from "react";
 import { GraphicWalker, IMutField, IChart } from "@kanaries/graphic-walker";
 
 interface YourEmbeddingAppProps {
-    data: any[];
-    fields: IMutField[];
-    chart: IChart[]; 
+    data?: any[];  
+    fields?: IMutField[]; 
+    chart?: IChart[]; 
 }
 
 const YourEmbeddingApp: React.FC<YourEmbeddingAppProps> = ({ data, fields, chart }) => {
