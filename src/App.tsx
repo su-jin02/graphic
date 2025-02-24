@@ -67,7 +67,6 @@ const encodings: DraggableFieldState = {
         { fid: "Date", name: "Date", semanticType: "temporal", analyticType: "dimension" }
     ], // X-Axis (Date)
     color: [
-       
     ], // Color (Category)
     size: [],
     shape: [],
