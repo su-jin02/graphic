@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import * as XLSX from "xlsx";
 import YourEmbeddingApp from "./YourEmbeddingApp";
-import { IMutField, IChart, IVisualConfigNew, DraggableFieldState, IVisualLayout  } from "@kanaries/graphic-walker"; 
+import { IMutField, IChart, IVisualConfigNew, DraggableFieldState, IVisualLayout } from "@kanaries/graphic-walker";
 
 const config: IVisualConfigNew = {
     defaultAggregated: true,
@@ -84,11 +83,11 @@ const encodings: DraggableFieldState = {
 
 const graphicWalkerSpec: IChart[] = [
     {
-        visId: "bar_chart_1",
+        visId: "chart",
         name: "Custom Chart",
-        encodings: encodings, 
+        encodings: encodings,
         config: config,
-        layout: layout 
+        layout: layout
     }
 ];
 
@@ -96,45 +95,38 @@ const App: React.FC = () => {
     const [data, setData] = useState<any[]>([]);
 
     useEffect(() => {
-       const fetchData = async () => {
-    try {
-        const filePath = "/financial_statistics.csv";
-        const response = await fetch(filePath);
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        const sheetName = workbook.SheetNames[0];
+        const fetchData = async () => {
+            try {
+                const filePath = "/financial_statistics.json";
+                const response = await fetch(filePath);
 
-        if (!sheetName) {
-            console.error("❌ 엑셀 파일에 시트가 없습니다.");
-            setData([]);
-            return;
-        }
+                // ✅ JSON 데이터 로딩 (엑셀 처리 부분 제거)
+                const jsonData = await response.json(); // JSON 파싱
 
-        const sheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(sheet);
+                if (!Array.isArray(jsonData) || jsonData.length === 0) {
+                    console.error("❌ JSON 데이터가 비어 있거나 올바르지 않습니다.");
+                    setData([]);
+                    return;
+                }
 
-        if (!jsonData || jsonData.length === 0) {
-            console.error("❌ 엑셀 데이터를 변환했지만 비어 있습니다.");
-            setData([]);
-            return;
-        }
+                // ✅ JSON 날짜 필드 변환 (엑셀 변환 코드 제거)
+                const processedData = jsonData.map((row: any) => {
+                    if (row.Date) {
+                        return {
+                            ...row,
+                            Date: new Date(row.Date).toISOString().split("T")[0] // "YYYY-MM-DD" 형식 변환
+                        };
+                    }
+                    return row;
+                });
 
-        // 엑셀 날짜 변환: 엑셀 날짜는 1900년 1월 1일부터의 일수로 저장됨
-        jsonData.forEach((row: any) => {
-            if (row.Date) {
-                const excelDate = row.Date;
-                const jsDate = new Date((excelDate - 25569) * 86400 * 1000); 
-                row.Date = jsDate.toISOString().split("T")[0];  // "YYYY-MM-DD" 형식으로 변환
+                console.log("✅ JSON 데이터 로드됨:", processedData);
+                setData(processedData);
+            } catch (error) {
+                console.error("❌ 데이터 불러오는 중 오류 발생:", error);
+                setData([]);
             }
-        });
-
-        console.log("✅ 엑셀 데이터 로드됨:", jsonData);
-        setData(jsonData);
-    } catch (error) {
-        console.error("❌ 데이터 불러오는 중 오류 발생:", error);
-        setData([]);
-    }
-};
+        };
         fetchData();
     }, []);
 
